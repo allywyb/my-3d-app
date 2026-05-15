@@ -121,7 +121,7 @@ function App() {
 
 export default App
 */
-
+/*
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 
@@ -141,3 +141,36 @@ export default function App() {
     </Canvas>
   )
 }
+*/
+
+import { Suspense } from 'react'
+import { Canvas } from '@react-three/fiber'
+// 引入 Center 和 Stage
+import { OrbitControls, useGLTF, Center, Stage } from '@react-three/drei'
+
+function Model() {
+  const { scene } = useGLTF('/streetgeo-v1.glb')
+  return <primitive object={scene} />
+}
+
+export default function App() {
+  return (
+    // 必须给容器设置宽高，否则在 Framer 里可能显示不出来或交互失效
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+        <Suspense fallback={null}>
+          {/* Stage 会自动处理光照、阴影，并根据模型大小缩放相机视角 */}
+          <Stage preset="rembrandt" intensity={1} environment="city">
+            <Center>
+              <Model />
+            </Center>
+          </Stage>
+        </Suspense>
+
+        {/* makeDefault 确保控制器成为主控制器 */}
+        <OrbitControls makeDefault />
+      </Canvas>
+    </div>
+  )
+}
+
